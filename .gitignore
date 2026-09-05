@@ -1,0 +1,6 @@
+git init
+git add .
+git commit -m "Coletor de links de grupos de WhatsApp"
+git branch -M main
+git remote add origin https://github.com/SEU-USUARIO/coletor-grupos-whatsapp.git
+git push -u origin main
