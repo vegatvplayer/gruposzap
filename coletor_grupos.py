@@ -70,9 +70,19 @@ FONTES = {
 }
 
 PASTA = os.path.dirname(os.path.abspath(__file__))
-ARQ_HISTORICO = os.path.join(PASTA, "historico.json")
-ARQ_PAINEL = os.path.join(PASTA, "painel.html")
-ARQ_CSV = os.path.join(PASTA, "grupos.csv")
+
+# Opcoes de ambiente (usadas pela automacao do GitHub; no PC pode ignorar)
+#   SAIDA=pasta      -> onde gravar os arquivos gerados
+#   SEM_HISTORICO=1  -> nao usar/gravar historico (gera a lista completa toda vez)
+#   SEM_ABRIR=1      -> nao abrir o navegador no final
+SAIDA = os.path.abspath(os.environ.get("SAIDA") or PASTA)
+USAR_HISTORICO = os.environ.get("SEM_HISTORICO") != "1"
+ABRIR_NAVEGADOR = os.environ.get("SEM_ABRIR") != "1"
+os.makedirs(SAIDA, exist_ok=True)
+
+ARQ_HISTORICO = os.path.join(SAIDA, "historico.json")
+ARQ_PAINEL = os.path.join(SAIDA, "painel.html")
+ARQ_CSV = os.path.join(SAIDA, "grupos.csv")
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
@@ -91,6 +101,8 @@ RE_CONVITE = re.compile(r"chat\.whatsapp\.com/(?:invite/)?([A-Za-z0-9_-]{15,30})
 # ============================================================
 
 def carregar_historico():
+    if not USAR_HISTORICO:
+        return set()
     if os.path.exists(ARQ_HISTORICO):
         try:
             with open(ARQ_HISTORICO, "r", encoding="utf-8") as f:
@@ -101,6 +113,8 @@ def carregar_historico():
 
 
 def salvar_historico(codigos):
+    if not USAR_HISTORICO:
+        return
     with open(ARQ_HISTORICO, "w", encoding="utf-8") as f:
         json.dump(sorted(codigos), f, ensure_ascii=False, indent=0)
 
@@ -399,10 +413,11 @@ def main():
     print(f"  {ARQ_CSV}")
     print("=" * 58)
 
-    try:
-        webbrowser.open("file:///" + ARQ_PAINEL.replace("\\", "/"))
-    except Exception:
-        pass
+    if ABRIR_NAVEGADOR:
+        try:
+            webbrowser.open("file:///" + ARQ_PAINEL.replace("\\", "/"))
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":
@@ -410,4 +425,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\ncancelado.")
-    input("\nAperte ENTER para fechar...")
+    if ABRIR_NAVEGADOR:
+        input("\nAperte ENTER para fechar...")
