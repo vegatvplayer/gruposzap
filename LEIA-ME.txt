@@ -1,0 +1,45 @@
+COLETOR DE LINKS DE GRUPOS DE WHATSAPP
+======================================
+
+COMO USAR
+1. Coloque os 2 arquivos na mesma pasta (ex: C:\coletor)
+2. Clique duas vezes em EXECUTAR.bat
+3. Espere terminar. O painel.html abre sozinho no navegador.
+4. No painel: filtre por categoria, marque os que quiser e clique
+   em "Copiar selecionados" (ou "Copiar todos da tela").
+
+O texto sai assim:
+   1 - Nome do grupo: NOME DO GRUPO
+   link: https://chat.whatsapp.com/xxxxx
+
+   2 - Nome do grupo: OUTRO GRUPO
+   link: https://chat.whatsapp.com/yyyyy
+
+PRECISA DE PYTHON
+Se aparecer "Python nao encontrado", instale em python.org/downloads
+e MARQUE a caixa "Add Python to PATH".
+
+ARQUIVOS QUE O PROGRAMA CRIA
+- painel.html ....... o painel com os botoes de copiar
+- grupos.csv ........ mesma lista em planilha (abre no Excel)
+- historico.json .... memoria dos links ja coletados. Na proxima
+                      vez ele NAO repete os mesmos grupos.
+                      Apague esse arquivo se quiser comecar do zero.
+
+AJUSTES (abra coletor_grupos.py no Bloco de Notas, parte "CONFIGURACAO")
+- LIMITE_POR_CATEGORIA .. quantos grupos buscar por categoria (padrao 120)
+- DIAS_MAXIMOS .......... so pega grupo publicado nos ultimos X dias (padrao 150)
+- CATEGORIAS_ATIVAS ..... troque True por False para desligar uma categoria
+- PARALELO .............. velocidade. Se der erro, baixe para 3.
+
+SOBRE "LINK ATIVO"
+O WhatsApp nao informa mais, fora do app, se um convite ainda vale.
+Por isso o programa faz o possivel: pega so os grupos publicados
+recentemente (mais chance de estarem vivos), confere se a pagina do
+convite responde e descarta o que ja veio quebrado. Link morto de vez
+em quando ainda vai aparecer.
+
+BOTAO "JA ENTREI"
+No painel, cada grupo tem o botao "ja entrei". Ele apaga o grupo da
+sua vista (fica cinza) e isso fica salvo no navegador. Serve para nao
+repetir grupo entre um numero e outro.
