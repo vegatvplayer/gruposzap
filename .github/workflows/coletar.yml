@@ -1,0 +1,43 @@
+name: Coletar links
+
+on:
+  schedule:
+    - cron: "0 9 * * *"      # todo dia as 06:00 no horario de Brasilia
+  workflow_dispatch:          # botao "Run workflow" para rodar na hora
+
+permissions:
+  contents: write
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencia
+        run: pip install requests
+
+      - name: Coletar
+        env:
+          SAIDA: docs
+          SEM_HISTORICO: "1"
+          SEM_ABRIR: "1"
+        run: |
+          python coletor_grupos.py
+          if [ ! -f docs/painel.html ]; then
+            echo "::error::A coleta nao gerou nenhum link. Os sites podem estar fora do ar ou terem mudado."
+            exit 1
+          fi
+          mv docs/painel.html docs/index.html
+
+      - name: Publicar
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -f docs/index.html docs/grupos.csv
+          git diff --staged --quiet || git commit -m "Atualiza lista de grupos"
+          git push
